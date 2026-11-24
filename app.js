@@ -150,6 +150,11 @@ async function verDetalle(id) {
         elemento('formEstado').hidden = modo !== 'estado' || seleccion.estado === 'Cerrada';
         elemento('estado').value = seleccion.estado;
         if (!elemento('estado').value) elemento('estado').value = 'En atención';
+        elemento('detalleSolucion').textContent = seleccion.solucion || 'Sin registrar';
+        elemento('solucion').value = seleccion.solucion || '';
+        elemento('formSolucion').hidden = modo !== 'solucion' || seleccion.estado === 'Cerrada';
+        elemento('formCerrar').hidden = modo !== 'cerrar' || seleccion.estado === 'Cerrada';
+        if (modo === 'cerrar' && seleccion.estado !== 'Resuelta' && seleccion.estado !== 'Cerrada') mensaje('mensajeDetalle', 'Primero registra la solución.', true);
         if (['asignar','estado','solucion','cerrar'].includes(modo) && seleccion.estado === 'Cerrada') mensaje('mensajeDetalle', 'La incidencia está cerrada y no admite cambios.');
     } catch (error) {
         mensaje(vistaActual === 'detalle' ? 'mensajeDetalle' : 'mensajeLista', error.message, true);
@@ -197,6 +202,13 @@ elemento('busquedaGlobal').onsubmit = function(evento) {
     elemento('buscar').value = elemento('buscarGlobal').value;
     elemento('filtroEstado').value = '';
     abrir('consulta', true);
+};
+
+elemento('formSolucion').onsubmit = function(evento) {
+    guardar(evento, 'estado', {estado: 'Resuelta', solucion: elemento('solucion').value}, 'Solución registrada');
+};
+elemento('formCerrar').onsubmit = function(evento) {
+    guardar(evento, 'estado', {estado: 'Cerrada'}, 'Incidencia cerrada');
 };
 
 contador();

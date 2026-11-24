@@ -51,6 +51,12 @@
       <button class="nav" data-vista="estado">
        Actualizar estado
       </button>
+      <button class="nav" data-vista="solucion">
+       Registrar solución
+      </button>
+      <button class="nav" data-vista="cerrar">
+       Cerrar incidencia
+      </button>
      </nav>
     </div>
     <div class="sidebar-pie">
@@ -209,6 +215,50 @@
         </h3>
         <p>
          Revisa el listado y el detalle completo.
+        </p>
+        <span class="abrir">
+         Abrir pantalla
+         <span>
+          →
+         </span>
+        </span>
+       </button>
+       <button class="tarjeta" data-vista="solucion">
+        <div class="tarjeta-cabecera">
+         <span class="numero">
+          05
+         </span>
+         <span class="paso">
+          Paso 5
+         </span>
+        </div>
+        <h3>
+         Registrar solución
+        </h3>
+        <p>
+         Documenta la resolución del problema.
+        </p>
+        <span class="abrir">
+         Abrir pantalla
+         <span>
+          →
+         </span>
+        </span>
+       </button>
+       <button class="tarjeta" data-vista="cerrar">
+        <div class="tarjeta-cabecera">
+         <span class="numero">
+          06
+         </span>
+         <span class="paso">
+          Paso 6
+         </span>
+        </div>
+        <h3>
+         Cerrar incidencia
+        </h3>
+        <p>
+         Finaliza la atención de la incidencia.
         </p>
         <span class="abrir">
          Abrir pantalla
@@ -431,6 +481,11 @@
        </dt>
        <dd id="detalleResponsable">
        </dd>
+       <dt>
+        Solución
+       </dt>
+       <dd id="detalleSolucion">
+       </dd>
       </dl>
       <form class="operacion" hidden="" id="formAsignar">
        <h3>
@@ -463,14 +518,38 @@
          <option>
           En atención
          </option>
-         <option>
-          Resuelta
-         </option>
         </select>
        </label>
        <div class="acciones">
         <button class="boton" type="submit">
          Guardar estado
+        </button>
+       </div>
+      </form>
+      <form class="operacion" hidden="" id="formSolucion">
+       <h3>
+        Registrar solución
+       </h3>
+       <label>
+        Solución aplicada
+        <textarea id="solucion" maxlength="500" required="" rows="4"></textarea>
+       </label>
+       <div class="acciones">
+        <button class="boton" type="submit">
+         Registrar solución
+        </button>
+       </div>
+      </form>
+      <form class="operacion" hidden="" id="formCerrar">
+       <h3>
+        Cerrar incidencia
+       </h3>
+       <p>
+        Para cerrar la incidencia, primero debe tener una solución registrada.
+       </p>
+       <div class="acciones">
+        <button class="boton" type="submit">
+         Cerrar incidencia
         </button>
        </div>
       </form>

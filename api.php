@@ -126,14 +126,25 @@ try {
     }
     if ($accion === 'estado') {
         $estado = texto($datos, 'estado');
-        $estados = ['Pendiente', 'En atención', 'Resuelta'];
+        $estados = ['Pendiente', 'En atención', 'Resuelta', 'Cerrada'];
         if (!in_array($estado, $estados)) responder(400, 'Selecciona un estado válido.');
         if ($estado !== 'Pendiente' && !$incidencia['responsable_id']) {
             responder(400, 'Primero asigna un responsable.');
         }
+        $solucion = texto($datos, 'solucion');
+        if ($estado === 'Resuelta' && ($solucion === '' || preg_match_all('/./us', $solucion) > 500)) {
+            responder(400, 'Describe la solución aplicada (máximo 500 caracteres).');
+        }
+        if ($estado === 'Cerrada') {
+            if ($incidencia['estado'] !== 'Resuelta' || $incidencia['solucion'] === '') {
+                responder(400, 'Primero registra la solución y guarda el estado Resuelta.');
+            }
+            $solucion = $incidencia['solucion'];
+        }
+        if ($estado === 'Pendiente' || $estado === 'En atención') $solucion = '';
         $conexion->beginTransaction();
-        $consulta = $conexion->prepare('UPDATE incidencias SET estado = ? WHERE id = ?');
-        $consulta->execute([$estado, $id]);
+        $consulta = $conexion->prepare("UPDATE incidencias SET estado = ?, solucion = ? WHERE id = ? AND estado <> 'Cerrada'");
+        $consulta->execute([$estado, $solucion, $id]);
         registrarMovimiento($conexion, $id, 'Estado', $estado);
         $conexion->commit();
         responder(200, 'Estado actualizado correctamente.');
