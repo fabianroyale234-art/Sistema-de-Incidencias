@@ -56,16 +56,22 @@ elemento('abrirMenu').onclick = function() {
 };
 elemento('cerrarMenu').onclick = cerrarMenu;
 elemento('overlay').onclick = cerrarMenu;
-function abrir(vista) {
+function abrir(vista, conservarBusqueda = false) {
     if (vista === 'flujo' || vista === 'registro') {
         mostrar(vista, nombres[vista], vista);
         return;
     }
-    // LISTA
+    modo = vista;
+    seleccion = null;
+    elemento('tituloLista').textContent = nombres[vista];
+    elemento('descripcionLista').textContent = vista === 'consulta' ? 'Revisa el listado y el detalle de las incidencias.' : 'Selecciona una incidencia para continuar.';
+    // REINICIAR
+    mostrar('consulta', nombres[vista], vista);
+    cargarLista();
 }
 for (const boton of document.querySelectorAll('[data-vista]')) boton.onclick = function() { abrir(boton.dataset.vista); };
 elemento('atras').onclick = function() {
-    // ATRAS
+    if (vistaActual === 'detalle') { abrir(modo); return; }
     abrir(vistaActual === 'confirmacion' ? modo : 'flujo');
 };
 function confirmar(titulo, texto) {
@@ -87,10 +93,62 @@ formulario.onsubmit = async function(evento) {
         mensaje('mensajeRegistro', '');
         modo = 'registro';
         confirmar('Incidencia registrada', resultado.mensaje + ' Código: ' + codigo(resultado.datos.id));
-        // CONTADOR
+        await contador();
     } catch (error) {
         mensaje('mensajeRegistro', error.message, true);
     } finally { boton.disabled = false; }
 };
 
-api('salud').catch(function() {});
+async function contador() {
+    try {
+        const resultado = await api('listar');
+        elemento('contador').textContent = resultado.datos.length + ' incidencias registradas';
+    } catch (error) { elemento('contador').textContent = 'Sin datos disponibles'; }
+}
+async function cargarLista() {
+    elemento('filas').textContent = '';
+    mensaje('mensajeLista', 'Cargando incidencias...');
+    const modoLista = modo;
+    try {
+        const resultado = await api('listar');
+        if (modo !== modoLista) return;
+        elemento('filas').textContent = '';
+        for (const incidencia of resultado.datos) {
+            const fila = elemento('filas').insertRow();
+            for (const valor of [codigo(incidencia.id), incidencia.tipo, incidencia.lugar]) fila.insertCell().textContent = valor;
+            const etiqueta = document.createElement('span');
+            const clases = {'Pendiente':'pendiente', 'En atención':'atencion', 'Resuelta':'resuelta'};
+            etiqueta.className = 'estado ' + (clases[incidencia.estado] || '');
+            etiqueta.textContent = incidencia.estado;
+            fila.insertCell().appendChild(etiqueta);
+            fila.insertCell().textContent = incidencia.responsable || 'Sin asignar';
+            const boton = document.createElement('button');
+            boton.className = 'boton secundario boton-tabla';
+            boton.textContent = modoLista === 'consulta' ? 'Ver detalle' : 'Seleccionar';
+            boton.onclick = function() { verDetalle(incidencia.id); };
+            fila.insertCell().appendChild(boton);
+        }
+        mensaje('mensajeLista', resultado.datos.length ? resultado.datos.length + ' incidencia(s) encontrada(s).' : 'No hay incidencias que mostrar.');
+    } catch (error) { mensaje('mensajeLista', error.message, true); }
+}
+async function verDetalle(id) {
+    try {
+        const modoDetalle = modo;
+        const resultado = await api('detalle&id=' + id);
+        if (modo !== modoDetalle || vistaActual !== 'consulta') return;
+        seleccion = resultado.datos;
+        elemento('tituloDetalle').textContent = (modo === 'consulta' ? 'Detalle de incidencia' : nombres[modo]) + ' · ' + codigo(id);
+        for (const campo of ['tipo','lugar','fecha','descripcion','estado','responsable']) {
+            elemento('detalle' + campo[0].toUpperCase() + campo.slice(1)).textContent = seleccion[campo] || 'Sin asignar';
+        }
+        mensaje('mensajeDetalle', '');
+        mostrar('detalle', nombres[modo], modo);
+        
+    } catch (error) {
+        mensaje(vistaActual === 'detalle' ? 'mensajeDetalle' : 'mensajeLista', error.message, true);
+    }
+}
+elemento('recargar').onclick = cargarLista;
+elemento('volverLista').onclick = function() { abrir(modo); };
+
+contador();

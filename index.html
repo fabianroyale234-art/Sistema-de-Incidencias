@@ -42,6 +42,9 @@
       <button class="nav" data-vista="registro">
        Registrar incidencia
       </button>
+      <button class="nav" data-vista="consulta">
+       Consultar incidencia
+      </button>
      </nav>
     </div>
     <div class="sidebar-pie">
@@ -70,6 +73,12 @@
         <p class="subtitulo">
          <span id="ruta">
           Flujo principal del sistema
+         </span>
+         <span>
+          ·
+         </span>
+         <span id="contador">
+          Consultando incidencias…
          </span>
         </p>
        </div>
@@ -122,6 +131,28 @@
         </h3>
         <p>
          Captura tipo, lugar, fecha y descripción.
+        </p>
+        <span class="abrir">
+         Abrir pantalla
+         <span>
+          →
+         </span>
+        </span>
+       </button>
+       <button class="tarjeta" data-vista="consulta">
+        <div class="tarjeta-cabecera">
+         <span class="numero">
+          02
+         </span>
+         <span class="paso">
+          Paso 2
+         </span>
+        </div>
+        <h3>
+         Consultar incidencia
+        </h3>
+        <p>
+         Revisa el listado y el detalle completo.
         </p>
         <span class="abrir">
          Abrir pantalla
@@ -222,8 +253,102 @@
        <button class="boton secundario" data-vista="flujo">
         Volver al inicio
        </button>
-       <button class="boton" data-vista="registro">
-        Registrar otra incidencia
+       <button class="boton" data-vista="consulta">
+        Consultar incidencia
+       </button>
+      </div>
+     </section>
+     <section class="panel" hidden="" id="consulta">
+      <div class="cabecera-panel cabecera-flujo">
+       <div>
+        <h2 id="tituloLista">
+         Consultar incidencia
+        </h2>
+        <p id="descripcionLista">
+         Revisa el listado y selecciona una incidencia.
+        </p>
+       </div>
+       <button class="boton secundario" id="recargar">
+        Actualizar lista
+       </button>
+      </div>
+      <p class="mensaje" id="mensajeLista" role="status">
+      </p>
+      <div class="tabla-contenedor">
+       <table>
+        <thead>
+         <tr>
+          <th>
+           Código
+          </th>
+          <th>
+           Tipo
+          </th>
+          <th>
+           Lugar
+          </th>
+          <th>
+           Estado
+          </th>
+          <th>
+           Responsable
+          </th>
+          <th>
+           Acción
+          </th>
+         </tr>
+        </thead>
+        <tbody id="filas">
+        </tbody>
+       </table>
+      </div>
+     </section>
+     <section class="panel panel-form" hidden="" id="detalle">
+      <div class="cabecera-panel">
+       <h2 id="tituloDetalle">
+        Detalle de incidencia
+       </h2>
+       <p id="descripcionDetalle">
+        Información registrada.
+       </p>
+      </div>
+      <dl class="detalle-datos">
+       <dt>
+        Tipo
+       </dt>
+       <dd id="detalleTipo">
+       </dd>
+       <dt>
+        Lugar
+       </dt>
+       <dd id="detalleLugar">
+       </dd>
+       <dt>
+        Fecha
+       </dt>
+       <dd id="detalleFecha">
+       </dd>
+       <dt>
+        Descripción
+       </dt>
+       <dd id="detalleDescripcion">
+       </dd>
+       <dt>
+        Estado
+       </dt>
+       <dd id="detalleEstado">
+       </dd>
+       <dt>
+        Responsable
+       </dt>
+       <dd id="detalleResponsable">
+       </dd>
+      </dl>
+      <p class="mensaje" id="mensajeDetalle" role="status">
+      </p>
+      <div class="acciones">
+       <button class="boton secundario" id="volverLista">
+        Volver al listado
        </button>
       </div>
      </section>

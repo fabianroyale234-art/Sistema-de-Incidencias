@@ -26,7 +26,7 @@ function texto($datos, $campo) {
 
 $accion = $_GET['accion'] ?? '';
 $metodo = $_SERVER['REQUEST_METHOD'];
-$permitidas = ['salud' => 'GET', 'registrar' => 'POST'];
+$permitidas = ['salud' => 'GET', 'registrar' => 'POST', 'listar' => 'GET', 'detalle' => 'GET'];
 if (!is_string($accion) || !isset($permitidas[$accion])) responder(404, 'Operación no encontrada.');
 if ($metodo !== $permitidas[$accion]) responder(405, 'Método no permitido.');
 $datos = [];
@@ -63,6 +63,20 @@ try {
         registrarMovimiento($conexion, $id, 'Registro', 'Incidencia registrada');
         $conexion->commit();
         responder(201, 'Incidencia registrada correctamente.', ['id' => $id]);
+    }
+    $sql = 'SELECT i.*, r.nombre AS responsable FROM incidencias i LEFT JOIN responsables r ON i.responsable_id = r.id';
+    if ($accion === 'listar') {
+        $consulta = $conexion->query($sql . ' ORDER BY i.id DESC');
+        responder(200, 'Consulta realizada.', $consulta->fetchAll());
+    }
+    if ($accion === 'detalle') {
+        $id = filter_var($_GET['id'] ?? '', FILTER_VALIDATE_INT);
+        if (!$id || $id < 1) responder(400, 'Código inválido.');
+        $consulta = $conexion->prepare($sql . ' WHERE i.id = ?');
+        $consulta->execute([$id]);
+        $incidencia = $consulta->fetch();
+        if (!$incidencia) responder(404, 'Incidencia no encontrada.');
+        responder(200, 'Incidencia encontrada.', $incidencia);
     }
     responder(404, 'Operación no encontrada.');
 } catch (Throwable $error) {
