@@ -26,7 +26,7 @@ function texto($datos, $campo) {
 
 $accion = $_GET['accion'] ?? '';
 $metodo = $_SERVER['REQUEST_METHOD'];
-$permitidas = ['salud' => 'GET', 'registrar' => 'POST', 'listar' => 'GET', 'detalle' => 'GET', 'responsables' => 'GET', 'asignar' => 'POST'];
+$permitidas = ['salud' => 'GET', 'registrar' => 'POST', 'listar' => 'GET', 'detalle' => 'GET', 'responsables' => 'GET', 'asignar' => 'POST', 'estado' => 'POST'];
 if (!is_string($accion) || !isset($permitidas[$accion])) responder(404, 'Operación no encontrada.');
 if ($metodo !== $permitidas[$accion]) responder(405, 'Método no permitido.');
 $datos = [];
@@ -82,7 +82,7 @@ try {
         $consulta = $conexion->query('SELECT id, nombre, area FROM responsables ORDER BY nombre');
         responder(200, 'Personal disponible.', $consulta->fetchAll());
     }
-    if ($accion === 'asignar') {
+    if ($accion === 'asignar' || $accion === 'estado') {
         $id = filter_var($datos['id'] ?? '', FILTER_VALIDATE_INT);
         if (!$id || $id < 1) responder(400, 'Código inválido.');
         $consulta = $conexion->prepare('SELECT * FROM incidencias WHERE id = ?');
@@ -103,6 +103,20 @@ try {
         registrarMovimiento($conexion, $id, 'Asignación', 'Responsable asignado: ' . $responsable);
         $conexion->commit();
         responder(200, 'Responsable asignado correctamente.');
+    }
+    if ($accion === 'estado') {
+        $estado = texto($datos, 'estado');
+        $estados = ['Pendiente', 'En atención', 'Resuelta'];
+        if (!in_array($estado, $estados)) responder(400, 'Selecciona un estado válido.');
+        if ($estado !== 'Pendiente' && !$incidencia['responsable_id']) {
+            responder(400, 'Primero asigna un responsable.');
+        }
+        $conexion->beginTransaction();
+        $consulta = $conexion->prepare('UPDATE incidencias SET estado = ? WHERE id = ?');
+        $consulta->execute([$estado, $id]);
+        registrarMovimiento($conexion, $id, 'Estado', $estado);
+        $conexion->commit();
+        responder(200, 'Estado actualizado correctamente.');
     }
     responder(404, 'Operación no encontrada.');
 } catch (Throwable $error) {

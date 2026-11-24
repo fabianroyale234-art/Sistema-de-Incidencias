@@ -48,6 +48,9 @@
       <button class="nav" data-vista="asignar">
        Asignar responsable
       </button>
+      <button class="nav" data-vista="estado">
+       Actualizar estado
+      </button>
      </nav>
     </div>
     <div class="sidebar-pie">
@@ -164,13 +167,35 @@
          </span>
         </span>
        </button>
-       <button class="tarjeta" data-vista="consulta">
+       <button class="tarjeta" data-vista="estado">
         <div class="tarjeta-cabecera">
          <span class="numero">
           03
          </span>
          <span class="paso">
           Paso 3
+         </span>
+        </div>
+        <h3>
+         Actualizar estado
+        </h3>
+        <p>
+         Informa el progreso de la atención.
+        </p>
+        <span class="abrir">
+         Abrir pantalla
+         <span>
+          →
+         </span>
+        </span>
+       </button>
+       <button class="tarjeta" data-vista="consulta">
+        <div class="tarjeta-cabecera">
+         <span class="numero">
+          04
+         </span>
+         <span class="paso">
+          Paso 4
          </span>
         </div>
         <h3>
@@ -384,6 +409,30 @@
        <div class="acciones">
         <button class="boton" type="submit">
          Guardar asignación
+        </button>
+       </div>
+      </form>
+      <form class="operacion" hidden="" id="formEstado">
+       <h3>
+        Actualizar estado
+       </h3>
+       <label>
+        Nuevo estado
+        <select id="estado" required="">
+         <option>
+          Pendiente
+         </option>
+         <option>
+          En atención
+         </option>
+         <option>
+          Resuelta
+         </option>
+        </select>
+       </label>
+       <div class="acciones">
+        <button class="boton" type="submit">
+         Guardar estado
         </button>
        </div>
       </form>

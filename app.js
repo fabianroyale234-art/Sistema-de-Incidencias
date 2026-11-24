@@ -145,6 +145,9 @@ async function verDetalle(id) {
         mostrar('detalle', nombres[modo], modo);
         elemento('formAsignar').hidden = modo !== 'asignar' || seleccion.estado === 'Cerrada';
         if (!elemento('formAsignar').hidden) await cargarResponsables();
+        elemento('formEstado').hidden = modo !== 'estado' || seleccion.estado === 'Cerrada';
+        elemento('estado').value = seleccion.estado;
+        if (!elemento('estado').value) elemento('estado').value = 'En atención';
         if (['asignar','estado','solucion','cerrar'].includes(modo) && seleccion.estado === 'Cerrada') mensaje('mensajeDetalle', 'La incidencia está cerrada y no admite cambios.');
     } catch (error) {
         mensaje(vistaActual === 'detalle' ? 'mensajeDetalle' : 'mensajeLista', error.message, true);
@@ -179,6 +182,10 @@ async function guardar(evento, accion, datos, titulo) {
 }
 elemento('formAsignar').onsubmit = function(evento) {
     guardar(evento, 'asignar', {responsable_id: Number(elemento('responsable').value)}, 'Responsable asignado');
+};
+
+elemento('formEstado').onsubmit = function(evento) {
+    guardar(evento, 'estado', {estado: elemento('estado').value}, 'Estado actualizado');
 };
 
 contador();
