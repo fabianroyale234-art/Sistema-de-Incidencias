@@ -89,6 +89,12 @@
         </p>
        </div>
       </div>
+      <form class="busqueda-global" id="busquedaGlobal">
+       <input aria-label="Buscar incidencias" id="buscarGlobal" placeholder="Buscar incidencias (ej. INC-0001)"/>
+       <button class="boton" type="submit">
+        Buscar
+       </button>
+      </form>
      </div>
     </header>
     <div class="barra-api">
@@ -322,6 +328,38 @@
         Actualizar lista
        </button>
       </div>
+      <form class="filtros" id="formBuscar">
+       <label>
+        Buscar
+        <input id="buscar" maxlength="100" placeholder="Código, tipo, lugar o descripción"/>
+       </label>
+       <label>
+        Estado
+        <select id="filtroEstado">
+         <option value="">
+          Todos
+         </option>
+         <option>
+          Pendiente
+         </option>
+         <option>
+          En atención
+         </option>
+         <option>
+          Resuelta
+         </option>
+         <option>
+          Cerrada
+         </option>
+        </select>
+       </label>
+       <button class="boton" type="submit">
+        Buscar
+       </button>
+       <button class="boton secundario" id="limpiar" type="button">
+        Limpiar
+       </button>
+      </form>
       <p class="mensaje" id="mensajeLista" role="status">
       </p>
       <div class="tabla-contenedor">

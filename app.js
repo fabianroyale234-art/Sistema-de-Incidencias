@@ -65,7 +65,7 @@ function abrir(vista, conservarBusqueda = false) {
     seleccion = null;
     elemento('tituloLista').textContent = nombres[vista];
     elemento('descripcionLista').textContent = vista === 'consulta' ? 'Revisa el listado y el detalle de las incidencias.' : 'Selecciona una incidencia para continuar.';
-    // REINICIAR
+    if (!conservarBusqueda) elemento('formBuscar').reset();
     mostrar('consulta', nombres[vista], vista);
     cargarLista();
 }
@@ -110,7 +110,9 @@ async function cargarLista() {
     mensaje('mensajeLista', 'Cargando incidencias...');
     const modoLista = modo;
     try {
-        const resultado = await api('listar');
+        const buscar = encodeURIComponent(elemento('buscar').value.trim());
+        const estado = encodeURIComponent(elemento('filtroEstado').value);
+        const resultado = await api('listar&buscar=' + buscar + '&estado=' + estado);
         if (modo !== modoLista) return;
         elemento('filas').textContent = '';
         for (const incidencia of resultado.datos) {
@@ -186,6 +188,15 @@ elemento('formAsignar').onsubmit = function(evento) {
 
 elemento('formEstado').onsubmit = function(evento) {
     guardar(evento, 'estado', {estado: elemento('estado').value}, 'Estado actualizado');
+};
+
+elemento('formBuscar').onsubmit = function(evento) { evento.preventDefault(); cargarLista(); };
+elemento('limpiar').onclick = function() { elemento('formBuscar').reset(); cargarLista(); };
+elemento('busquedaGlobal').onsubmit = function(evento) {
+    evento.preventDefault();
+    elemento('buscar').value = elemento('buscarGlobal').value;
+    elemento('filtroEstado').value = '';
+    abrir('consulta', true);
 };
 
 contador();

@@ -66,7 +66,27 @@ try {
     }
     $sql = 'SELECT i.*, r.nombre AS responsable FROM incidencias i LEFT JOIN responsables r ON i.responsable_id = r.id';
     if ($accion === 'listar') {
-        $consulta = $conexion->query($sql . ' ORDER BY i.id DESC');
+        $buscar = texto($_GET, 'buscar');
+        $estado = texto($_GET, 'estado');
+        $sql .= ' WHERE 1 = 1';
+        $parametros = [];
+        if ($buscar !== '') {
+            if (preg_match('/^INC-(\d+)$/i', $buscar, $partes)) {
+                $sql .= ' AND i.id = ?';
+                $parametros[] = (int) $partes[1];
+            } else {
+                $sql .= ' AND (i.tipo LIKE ? OR i.lugar LIKE ? OR i.descripcion LIKE ?)';
+                $palabra = '%' . $buscar . '%';
+                $parametros = [$palabra, $palabra, $palabra];
+            }
+        }
+        if ($estado !== '') {
+            if (!in_array($estado, ['Pendiente', 'En atención', 'Resuelta', 'Cerrada'])) responder(400, 'Estado inválido.');
+            $sql .= ' AND i.estado = ?';
+            $parametros[] = $estado;
+        }
+        $consulta = $conexion->prepare($sql . ' ORDER BY i.id DESC');
+        $consulta->execute($parametros);
         responder(200, 'Consulta realizada.', $consulta->fetchAll());
     }
     if ($accion === 'detalle') {
