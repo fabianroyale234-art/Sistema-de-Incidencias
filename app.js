@@ -143,12 +143,42 @@ async function verDetalle(id) {
         }
         mensaje('mensajeDetalle', '');
         mostrar('detalle', nombres[modo], modo);
-        
+        elemento('formAsignar').hidden = modo !== 'asignar' || seleccion.estado === 'Cerrada';
+        if (!elemento('formAsignar').hidden) await cargarResponsables();
+        if (['asignar','estado','solucion','cerrar'].includes(modo) && seleccion.estado === 'Cerrada') mensaje('mensajeDetalle', 'La incidencia está cerrada y no admite cambios.');
     } catch (error) {
         mensaje(vistaActual === 'detalle' ? 'mensajeDetalle' : 'mensajeLista', error.message, true);
     }
 }
 elemento('recargar').onclick = cargarLista;
 elemento('volverLista').onclick = function() { abrir(modo); };
+
+async function cargarResponsables() {
+    const resultado = await api('responsables');
+    const combo = elemento('responsable');
+    combo.innerHTML = '<option value="">Seleccione un responsable</option>';
+    for (const persona of resultado.datos) {
+        const opcion = document.createElement('option');
+        opcion.value = persona.id;
+        opcion.textContent = persona.nombre + ' - ' + persona.area;
+        combo.appendChild(opcion);
+    }
+    combo.value = seleccion.responsable_id || '';
+}
+async function guardar(evento, accion, datos, titulo) {
+    evento.preventDefault();
+    if (!seleccion) return;
+    const boton = evento.target.querySelector('button[type="submit"]');
+    boton.disabled = true;
+    try {
+        datos.id = seleccion.id;
+        const resultado = await api(accion, datos);
+        confirmar(titulo, resultado.mensaje + ' Código: ' + codigo(datos.id));
+    } catch (error) { mensaje('mensajeDetalle', error.message, true); }
+    finally { boton.disabled = false; }
+}
+elemento('formAsignar').onsubmit = function(evento) {
+    guardar(evento, 'asignar', {responsable_id: Number(elemento('responsable').value)}, 'Responsable asignado');
+};
 
 contador();

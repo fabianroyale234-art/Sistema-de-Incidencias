@@ -45,6 +45,9 @@
       <button class="nav" data-vista="consulta">
        Consultar incidencia
       </button>
+      <button class="nav" data-vista="asignar">
+       Asignar responsable
+      </button>
      </nav>
     </div>
     <div class="sidebar-pie">
@@ -139,13 +142,35 @@
          </span>
         </span>
        </button>
-       <button class="tarjeta" data-vista="consulta">
+       <button class="tarjeta" data-vista="asignar">
         <div class="tarjeta-cabecera">
          <span class="numero">
           02
          </span>
          <span class="paso">
           Paso 2
+         </span>
+        </div>
+        <h3>
+         Asignar responsable
+        </h3>
+        <p>
+         Asocia personal de soporte disponible.
+        </p>
+        <span class="abrir">
+         Abrir pantalla
+         <span>
+          →
+         </span>
+        </span>
+       </button>
+       <button class="tarjeta" data-vista="consulta">
+        <div class="tarjeta-cabecera">
+         <span class="numero">
+          03
+         </span>
+         <span class="paso">
+          Paso 3
          </span>
         </div>
         <h3>
@@ -344,6 +369,24 @@
        <dd id="detalleResponsable">
        </dd>
       </dl>
+      <form class="operacion" hidden="" id="formAsignar">
+       <h3>
+        Asignar responsable
+       </h3>
+       <label>
+        Personal de soporte
+        <select id="responsable" required="">
+         <option value="">
+          Seleccione un responsable
+         </option>
+        </select>
+       </label>
+       <div class="acciones">
+        <button class="boton" type="submit">
+         Guardar asignación
+        </button>
+       </div>
+      </form>
       <p class="mensaje" id="mensajeDetalle" role="status">
       </p>
       <div class="acciones">

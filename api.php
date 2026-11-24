@@ -26,7 +26,7 @@ function texto($datos, $campo) {
 
 $accion = $_GET['accion'] ?? '';
 $metodo = $_SERVER['REQUEST_METHOD'];
-$permitidas = ['salud' => 'GET', 'registrar' => 'POST', 'listar' => 'GET', 'detalle' => 'GET'];
+$permitidas = ['salud' => 'GET', 'registrar' => 'POST', 'listar' => 'GET', 'detalle' => 'GET', 'responsables' => 'GET', 'asignar' => 'POST'];
 if (!is_string($accion) || !isset($permitidas[$accion])) responder(404, 'Operación no encontrada.');
 if ($metodo !== $permitidas[$accion]) responder(405, 'Método no permitido.');
 $datos = [];
@@ -77,6 +77,32 @@ try {
         $incidencia = $consulta->fetch();
         if (!$incidencia) responder(404, 'Incidencia no encontrada.');
         responder(200, 'Incidencia encontrada.', $incidencia);
+    }
+    if ($accion === 'responsables') {
+        $consulta = $conexion->query('SELECT id, nombre, area FROM responsables ORDER BY nombre');
+        responder(200, 'Personal disponible.', $consulta->fetchAll());
+    }
+    if ($accion === 'asignar') {
+        $id = filter_var($datos['id'] ?? '', FILTER_VALIDATE_INT);
+        if (!$id || $id < 1) responder(400, 'Código inválido.');
+        $consulta = $conexion->prepare('SELECT * FROM incidencias WHERE id = ?');
+        $consulta->execute([$id]);
+        $incidencia = $consulta->fetch();
+        if (!$incidencia) responder(404, 'Incidencia no encontrada.');
+        if ($incidencia['estado'] === 'Cerrada') responder(400, 'La incidencia está cerrada y no admite cambios.');
+    }
+    if ($accion === 'asignar') {
+        $responsable = filter_var($datos['responsable_id'] ?? '', FILTER_VALIDATE_INT);
+        if (!$responsable || $responsable < 1) responder(400, 'Selecciona un responsable.');
+        $consulta = $conexion->prepare('SELECT id FROM responsables WHERE id = ?');
+        $consulta->execute([$responsable]);
+        if (!$consulta->fetch()) responder(404, 'Responsable no encontrado.');
+        $conexion->beginTransaction();
+        $consulta = $conexion->prepare("UPDATE incidencias SET responsable_id = ? WHERE id = ? AND estado <> 'Cerrada'");
+        $consulta->execute([$responsable, $id]);
+        registrarMovimiento($conexion, $id, 'Asignación', 'Responsable asignado: ' . $responsable);
+        $conexion->commit();
+        responder(200, 'Responsable asignado correctamente.');
     }
     responder(404, 'Operación no encontrada.');
 } catch (Throwable $error) {
