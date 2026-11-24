@@ -156,6 +156,10 @@ async function verDetalle(id) {
         elemento('formCerrar').hidden = modo !== 'cerrar' || seleccion.estado === 'Cerrada';
         if (modo === 'cerrar' && seleccion.estado !== 'Resuelta' && seleccion.estado !== 'Cerrada') mensaje('mensajeDetalle', 'Primero registra la solución.', true);
         if (['asignar','estado','solucion','cerrar'].includes(modo) && seleccion.estado === 'Cerrada') mensaje('mensajeDetalle', 'La incidencia está cerrada y no admite cambios.');
+        elemento('panelHistorial').hidden = modo !== 'historial';
+        elemento('panelTiempo').hidden = modo !== 'tiempo';
+        if (modo === 'historial') await verHistorial(id);
+        if (modo === 'tiempo') await verTiempo(id);
     } catch (error) {
         mensaje(vistaActual === 'detalle' ? 'mensajeDetalle' : 'mensajeLista', error.message, true);
     }
@@ -210,5 +214,21 @@ elemento('formSolucion').onsubmit = function(evento) {
 elemento('formCerrar').onsubmit = function(evento) {
     guardar(evento, 'estado', {estado: 'Cerrada'}, 'Incidencia cerrada');
 };
+
+async function verHistorial(id) {
+    const resultado = await api('historial&id=' + id);
+    const filas = elemento('filasHistorial');
+    filas.textContent = '';
+    for (const movimiento of resultado.datos) {
+        const fila = filas.insertRow();
+        for (const valor of [movimiento.fecha, movimiento.accion, movimiento.detalle]) fila.insertCell().textContent = valor;
+    }
+    if (!resultado.datos.length) mensaje('mensajeDetalle', 'No hay movimientos registrados.');
+}
+async function verTiempo(id) {
+    const resultado = await api('tiempo&id=' + id);
+    const minutos = resultado.datos.minutos;
+    elemento('tiempoResultado').textContent = minutos === null ? 'Todavía no hay un tiempo de atención completo registrado.' : Math.floor(minutos / 60) + ' hora(s) y ' + minutos % 60 + ' minuto(s) desde el registro hasta la solución.';
+}
 
 contador();

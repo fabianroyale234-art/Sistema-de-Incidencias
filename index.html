@@ -51,11 +51,17 @@
       <button class="nav" data-vista="estado">
        Actualizar estado
       </button>
+      <button class="nav" data-vista="historial">
+       Consultar historial
+      </button>
       <button class="nav" data-vista="solucion">
        Registrar solución
       </button>
       <button class="nav" data-vista="cerrar">
        Cerrar incidencia
+      </button>
+      <button class="nav" data-vista="tiempo">
+       Consultar tiempo de atención
       </button>
      </nav>
     </div>
@@ -223,13 +229,35 @@
          </span>
         </span>
        </button>
-       <button class="tarjeta" data-vista="solucion">
+       <button class="tarjeta" data-vista="historial">
         <div class="tarjeta-cabecera">
          <span class="numero">
           05
          </span>
          <span class="paso">
           Paso 5
+         </span>
+        </div>
+        <h3>
+         Consultar historial
+        </h3>
+        <p>
+         Revisa los movimientos registrados.
+        </p>
+        <span class="abrir">
+         Abrir pantalla
+         <span>
+          →
+         </span>
+        </span>
+       </button>
+       <button class="tarjeta" data-vista="solucion">
+        <div class="tarjeta-cabecera">
+         <span class="numero">
+          06
+         </span>
+         <span class="paso">
+          Paso 6
          </span>
         </div>
         <h3>
@@ -248,10 +276,10 @@
        <button class="tarjeta" data-vista="cerrar">
         <div class="tarjeta-cabecera">
          <span class="numero">
-          06
+          07
          </span>
          <span class="paso">
-          Paso 6
+          Paso 7
          </span>
         </div>
         <h3>
@@ -259,6 +287,28 @@
         </h3>
         <p>
          Finaliza la atención de la incidencia.
+        </p>
+        <span class="abrir">
+         Abrir pantalla
+         <span>
+          →
+         </span>
+        </span>
+       </button>
+       <button class="tarjeta" data-vista="tiempo">
+        <div class="tarjeta-cabecera">
+         <span class="numero">
+          08
+         </span>
+         <span class="paso">
+          Paso 8
+         </span>
+        </div>
+        <h3>
+         Consultar tiempo de atención
+        </h3>
+        <p>
+         Consulta el tiempo entre registro y solución.
         </p>
         <span class="abrir">
          Abrir pantalla
@@ -553,6 +603,37 @@
         </button>
        </div>
       </form>
+      <div class="operacion" hidden="" id="panelHistorial">
+       <h3>
+        Historial de movimientos
+       </h3>
+       <div class="tabla-contenedor">
+        <table>
+         <thead>
+          <tr>
+           <th>
+            Fecha
+           </th>
+           <th>
+            Acción
+           </th>
+           <th>
+            Detalle
+           </th>
+          </tr>
+         </thead>
+         <tbody id="filasHistorial">
+         </tbody>
+        </table>
+       </div>
+      </div>
+      <div class="operacion" hidden="" id="panelTiempo">
+       <h3>
+        Tiempo de atención
+       </h3>
+       <p id="tiempoResultado">
+       </p>
+      </div>
       <p class="mensaje" id="mensajeDetalle" role="status">
       </p>
       <div class="acciones">

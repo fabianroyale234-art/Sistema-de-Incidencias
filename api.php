@@ -26,7 +26,7 @@ function texto($datos, $campo) {
 
 $accion = $_GET['accion'] ?? '';
 $metodo = $_SERVER['REQUEST_METHOD'];
-$permitidas = ['salud' => 'GET', 'registrar' => 'POST', 'listar' => 'GET', 'detalle' => 'GET', 'responsables' => 'GET', 'asignar' => 'POST', 'estado' => 'POST'];
+$permitidas = ['salud' => 'GET', 'historial' => 'GET', 'tiempo' => 'GET', 'registrar' => 'POST', 'listar' => 'GET', 'detalle' => 'GET', 'responsables' => 'GET', 'asignar' => 'POST', 'estado' => 'POST'];
 if (!is_string($accion) || !isset($permitidas[$accion])) responder(404, 'Operación no encontrada.');
 if ($metodo !== $permitidas[$accion]) responder(405, 'Método no permitido.');
 $datos = [];
@@ -97,6 +97,29 @@ try {
         $incidencia = $consulta->fetch();
         if (!$incidencia) responder(404, 'Incidencia no encontrada.');
         responder(200, 'Incidencia encontrada.', $incidencia);
+    }
+    if ($accion === 'historial' || $accion === 'tiempo') {
+        $id = filter_var($_GET['id'] ?? '', FILTER_VALIDATE_INT);
+        if (!$id || $id < 1) responder(400, 'Código inválido.');
+        $consulta = $conexion->prepare('SELECT estado FROM incidencias WHERE id = ?');
+        $consulta->execute([$id]);
+        $incidencia = $consulta->fetch();
+        if (!$incidencia) responder(404, 'Incidencia no encontrada.');
+        $consulta = $conexion->prepare('SELECT fecha, accion, detalle FROM historial WHERE incidencia_id = ? ORDER BY id');
+        $consulta->execute([$id]);
+        $movimientos = $consulta->fetchAll();
+        if ($accion === 'historial') responder(200, 'Historial consultado.', $movimientos);
+        $inicio = null;
+        $fin = null;
+        foreach ($movimientos as $movimiento) {
+            if ($movimiento['accion'] === 'Registro') $inicio = strtotime($movimiento['fecha']);
+            if ($movimiento['accion'] === 'Estado' && $movimiento['detalle'] === 'Resuelta') $fin = strtotime($movimiento['fecha']);
+        }
+        $minutos = null;
+        if ($inicio !== null && $fin !== null && in_array($incidencia['estado'], ['Resuelta', 'Cerrada'])) {
+            $minutos = (int) floor(max(0, $fin - $inicio) / 60);
+        }
+        responder(200, 'Tiempo consultado.', ['minutos' => $minutos]);
     }
     if ($accion === 'responsables') {
         $consulta = $conexion->query('SELECT id, nombre, area FROM responsables ORDER BY nombre');
