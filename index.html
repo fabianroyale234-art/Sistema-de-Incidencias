@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="es">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   ZYPHER | Sistema Web de Gestión de Incidencias Institucionales
+  </title>
+  <link href="estilos.css" rel="stylesheet"/>
+  <script defer="" src="app.js">
+  </script>
+ </head>
+ <body>
+  <div class="layout">
+   <button aria-label="Cerrar menú" class="overlay" id="overlay">
+   </button>
+   <aside class="sidebar" id="sidebar">
+    <div>
+     <div class="marca">
+      <div class="logo">
+       Z
+      </div>
+      <div>
+       <strong>
+        ZYPHER
+       </strong>
+       <p>
+        Sistema Web de Gestión de Incidencias Institucionales
+       </p>
+      </div>
+      <button aria-label="Cerrar menú" class="icono movil" id="cerrarMenu">
+       ×
+      </button>
+     </div>
+     <nav aria-label="Menú principal">
+      <button class="nav inicio activo" data-vista="flujo">
+       ⇄   Flujo principal del sistema
+      </button>
+      <p class="etiqueta-menu">
+       FUNCIONALIDADES
+      </p>
+      <button class="nav" data-vista="registro">
+       Registrar incidencia
+      </button>
+     </nav>
+    </div>
+    <div class="sidebar-pie">
+     <strong>
+      Soporte institucional
+     </strong>
+     <p>
+      IESP Simón Bolívar · Gestión y seguimiento de incidencias.
+     </p>
+    </div>
+   </aside>
+   <div class="area">
+    <header>
+     <div class="barra">
+      <div class="encabezado">
+       <button aria-label="Abrir menú" class="icono movil" id="abrirMenu">
+        ☰
+       </button>
+       <button aria-label="Volver" class="icono" id="atras">
+        ←
+       </button>
+       <div>
+        <h1>
+         Sistema Web de Gestión de Incidencias Institucionales
+        </h1>
+        <p class="subtitulo">
+         <span id="ruta">
+          Flujo principal del sistema
+         </span>
+        </p>
+       </div>
+      </div>
+     </div>
+    </header>
+    <div class="barra-api">
+     <div class="api-interior">
+      <span class="neutro" id="conexion" role="status">
+       Comprobando API
+      </span>
+      <span>
+       |
+      </span>
+      <span id="ultimaApi">
+       Esperando respuesta del servidor
+      </span>
+     </div>
+    </div>
+    <main>
+     <section class="panel" id="flujo">
+      <div class="cabecera-panel cabecera-flujo">
+       <div>
+        <span class="sello">
+         Gestión institucional
+        </span>
+        <h2>
+         Flujo principal del sistema
+        </h2>
+        <p>
+         Registra, consulta y da seguimiento a las incidencias institucionales.
+        </p>
+       </div>
+       <button class="boton" data-vista="registro">
+        Comenzar recorrido   →
+       </button>
+      </div>
+      <div class="tarjetas">
+       <button class="tarjeta" data-vista="registro">
+        <div class="tarjeta-cabecera">
+         <span class="numero">
+          01
+         </span>
+         <span class="paso">
+          Paso 1
+         </span>
+        </div>
+        <h3>
+         Registrar incidencia
+        </h3>
+        <p>
+         Captura tipo, lugar, fecha y descripción.
+        </p>
+        <span class="abrir">
+         Abrir pantalla
+         <span>
+          →
+         </span>
+        </span>
+       </button>
+      </div>
+      <p class="nota">
+       <strong>
+        Atención de incidencias:
+       </strong>
+       Selecciona una opción para iniciar o continuar el proceso.
+      </p>
+     </section>
+     <section class="panel panel-form" hidden="" id="registro">
+      <div class="cabecera-panel">
+       <h2>
+        Registrar incidencia
+       </h2>
+       <p>
+        Complete los datos para registrar una nueva incidencia institucional.
+       </p>
+      </div>
+      <form id="formRegistro">
+       <div class="campos">
+        <label>
+         Tipo de problema
+         <span>
+          *
+         </span>
+         <select name="tipo" required="">
+          <option value="">
+           Seleccione un tipo
+          </option>
+          <option>
+           Equipos
+          </option>
+          <option>
+           Redes y conectividad
+          </option>
+          <option>
+           Software institucional
+          </option>
+          <option>
+           Infraestructura
+          </option>
+          <option>
+           Otros
+          </option>
+         </select>
+        </label>
+        <label>
+         Fecha
+         <span>
+          *
+         </span>
+         <input name="fecha" required="" type="date"/>
+        </label>
+       </div>
+       <label>
+        Lugar
+        <span>
+         *
+        </span>
+        <input maxlength="100" name="lugar" placeholder="Ej. Laboratorio 2, aula 101" required=""/>
+       </label>
+       <label>
+        Descripción
+        <span>
+         *
+        </span>
+        <textarea maxlength="500" name="descripcion" placeholder="Describa el problema con el mayor detalle posible..." required="" rows="4"></textarea>
+       </label>
+       <div class="acciones">
+        <button class="boton secundario" data-vista="flujo" type="button">
+         Cancelar
+        </button>
+        <button class="boton" type="submit">
+         Registrar incidencia
+        </button>
+       </div>
+      </form>
+      <p class="mensaje" id="mensajeRegistro" role="status">
+      </p>
+     </section>
+     <section class="panel panel-form confirmacion" hidden="" id="confirmacion">
+      <div class="check">
+       ✓
+      </div>
+      <h2 id="tituloConfirmacion">
+       Incidencia registrada
+      </h2>
+      <p id="textoConfirmacion">
+      </p>
+      <div class="acciones">
+       <button class="boton secundario" data-vista="flujo">
+        Volver al inicio
+       </button>
+       <button class="boton" data-vista="registro">
+        Registrar otra incidencia
+       </button>
+      </div>
+     </section>
+    </main>
+    <footer>
+     <div class="footer-interior">
+      <span>
+       <strong>
+        ZYPHER
+       </strong>
+       · Sistema Web de Gestión de Incidencias Institucionales
+      </span>
+      <span>
+       IESP Simón Bolívar
+      </span>
+     </div>
+    </footer>
+   </div>
+  </div>
+ </body>
+</html>
