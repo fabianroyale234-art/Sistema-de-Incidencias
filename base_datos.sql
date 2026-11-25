@@ -1,3 +1,4 @@
+-- Importar desde phpMyAdmin. No elimina tablas ni registros existentes.
 CREATE DATABASE IF NOT EXISTS zypher CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE zypher;
 
@@ -5,7 +6,7 @@ CREATE TABLE IF NOT EXISTS responsables (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(80) NOT NULL,
     area VARCHAR(80) NOT NULL
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT IGNORE INTO responsables (id, nombre, area) VALUES
 (1, 'Carlos Mendoza', 'Equipos'),
@@ -23,7 +24,7 @@ CREATE TABLE IF NOT EXISTS incidencias (
     responsable_id INT NULL,
     solucion VARCHAR(500) NOT NULL DEFAULT '',
     FOREIGN KEY (responsable_id) REFERENCES responsables(id)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS historial (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -32,4 +33,4 @@ CREATE TABLE IF NOT EXISTS historial (
     accion VARCHAR(30) NOT NULL,
     detalle VARCHAR(100) NOT NULL,
     FOREIGN KEY (incidencia_id) REFERENCES incidencias(id)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
